@@ -110,7 +110,7 @@ public:
 		return result;
 	}
 
-	__declspec(noinline) static int HCost(const Cube<3>& state)
+	static int HCost(const Cube<3>& state)
 	{
 		int h = 0;
 		uint8_t parityByte = 0;
@@ -127,7 +127,7 @@ public:
 	}
 
 private:
-	__declspec(noinline) static void EdgeFound(int& h, uint8_t& parityByte, const Cube<3>& state, int fi, int pi)
+	static void EdgeFound(int& h, uint8_t& parityByte, const Cube<3>& state, int fi, int pi)
 	{
 		// Check if piece has parity
 		if (fi > 1)
@@ -155,7 +155,7 @@ private:
 		parityByte |= ColorParity(edgeOther, adjCenter);
 	}
 
-	__declspec(noinline) static int ColorParity(ColorEnum c1, ColorEnum c2)
+	static int ColorParity(ColorEnum c1, ColorEnum c2)
 	{
 		int ringIndex1 = ringIndexLUT[(int)c1];
 		int ringIndex2 = ringIndexLUT[(int)c2];
@@ -166,7 +166,7 @@ private:
 	}
 
 	template<typename... T>
-	__declspec(noinline) void AppendAdjacentNodes(std::priority_queue<Node*, T...>& nodes, std::vector<char*>& nodeBlocks, Node* node)
+	void AppendAdjacentNodes(std::priority_queue<Node*, T...>& nodes, std::vector<char*>& nodeBlocks, Node* node)
 	{
 		char* nodeBlock = new char[sizeof(Node) * 18];
 		nodeBlocks.push_back(nodeBlock);
