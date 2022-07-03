@@ -24,6 +24,7 @@ public:
 	{
 		constexpr int turnNum[3] = { 1, -1, 2 };
 		Sequence s;
+		s.turns.reserve(length);
 		Axis lastAxis = (Axis)(rand() % 3);
 		for (int i = 0; i < length; i++)
 		{

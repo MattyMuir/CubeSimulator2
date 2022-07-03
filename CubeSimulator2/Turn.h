@@ -47,7 +47,7 @@ public:
 			break;
 		}
 
-		if (turnStr.size() > 1)
+		if (turnStr.length() > 1)
 		{
 			switch (turnStr[1])
 			{

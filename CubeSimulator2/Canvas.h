@@ -8,6 +8,7 @@
 #include <string>
 
 #include "Cube.h"
+#include "CrossSolver.h"
 #include "Timer.h"
 
 class Main;

@@ -11,10 +11,26 @@ Canvas::Canvas(wxWindow* parent) : wxPanel(parent, wxID_ANY)
 {
 	SetBackgroundStyle(wxBG_STYLE_PAINT);
 	mainPtr = (Main*)parent;
+	srand(time(0));
 
-	cube = Cube<3>();
-	cube.ApplySequence(Sequence("M2 L2 R2"));
-	std::cout << cube.IsSolved() << std::endl;
+	TIMER(t);
+	CrossSolver solver;
+
+	int iter = 5000;
+	int lengthSum = 0;
+	for (int i = 0; i < iter; i++)
+	{
+		cube.Reset();
+
+		Sequence scramble = Sequence::RandomSequence(20);
+		cube.ApplySequence(scramble);
+
+		Sequence solution = solver(cube);
+		lengthSum += solution.turns.size();
+	}
+
+	std::cout << (float)lengthSum / iter << std::endl;
+	STOP_LOG(t);
 }
 
 Canvas::~Canvas()
@@ -27,7 +43,7 @@ void Canvas::OnDraw(wxDC& dc)
 	dc.Clear();
 
 	//Drawing here
-	float faceWidth = std::min(h / 3.0, w / 4.0) / 1.1;
+	float faceWidth = std::min((h * 0.9) / 3.0, (w * 0.9) / 4.0);
 	DrawFace(dc, cube, (int)FaceEnum::UP, faceWidth, 0.0, faceWidth); // Up
 	DrawFace(dc, cube, (int)FaceEnum::LEFT, 0.0, faceWidth, faceWidth); // Left
 	DrawFace(dc, cube, (int)FaceEnum::FRONT, faceWidth, faceWidth, faceWidth); //Front

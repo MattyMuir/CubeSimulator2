@@ -22,6 +22,7 @@
     <ClInclude Include="App.h" />
     <ClInclude Include="Canvas.h" />
     <ClInclude Include="Color.h" />
+    <ClInclude Include="CrossSolver.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="Face.h" />
     <ClInclude Include="Main.h" />
