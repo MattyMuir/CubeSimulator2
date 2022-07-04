@@ -92,7 +92,7 @@ public:
 			Node* current = nodes.top();
 			nodes.pop();
 
-			if (current->HCost() == 0)
+			if (current->HCost() == 0 && current->g <= 8)
 			{
 				result = ReconstructSequence(current);
 				break;
@@ -160,8 +160,7 @@ private:
 		int ringIndex1 = ringIndexLUT[(int)c1];
 		int ringIndex2 = ringIndexLUT[(int)c2];
 
-		int d = ringIndex2 - ringIndex1;
-		if (d < 0) d += 4;
+		int d = (ringIndex2 - ringIndex1 + 4) % 4;
 		return (1 << d);
 	}
 
@@ -204,5 +203,4 @@ private:
 
 		return s;
 	}
-private:
 };

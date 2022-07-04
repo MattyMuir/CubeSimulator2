@@ -15,9 +15,8 @@ Canvas::Canvas(wxWindow* parent) : wxPanel(parent, wxID_ANY)
 
 	TIMER(t);
 	CrossSolver solver;
-
-	int iter = 5000;
 	int lengthSum = 0;
+	int iter = 100000;
 	for (int i = 0; i < iter; i++)
 	{
 		cube.Reset();
@@ -26,11 +25,14 @@ Canvas::Canvas(wxWindow* parent) : wxPanel(parent, wxID_ANY)
 		cube.ApplySequence(scramble);
 
 		Sequence solution = solver(cube);
+
 		lengthSum += solution.turns.size();
 	}
+	STOP_LOG(t);
 
 	std::cout << (float)lengthSum / iter << std::endl;
-	STOP_LOG(t);
+
+	mainPtr->Destroy();
 }
 
 Canvas::~Canvas()

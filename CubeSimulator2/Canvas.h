@@ -9,6 +9,7 @@
 
 #include "Cube.h"
 #include "CrossSolver.h"
+#include "XCrossGenerator.h"
 #include "Timer.h"
 
 class Main;
