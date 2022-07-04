@@ -42,10 +42,13 @@
     <ClInclude Include="Timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CrossSolver.h">
+    <ClInclude Include="XCrossGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="XCrossGenerator.h">
+    <ClInclude Include="MemoryPool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CrossSolver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

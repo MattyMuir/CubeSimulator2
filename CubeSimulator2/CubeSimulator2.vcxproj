@@ -26,6 +26,7 @@
     <ClInclude Include="Cube.h" />
     <ClInclude Include="Face.h" />
     <ClInclude Include="Main.h" />
+    <ClInclude Include="MemoryPool.h" />
     <ClInclude Include="Sequence.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Turn.h" />

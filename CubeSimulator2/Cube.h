@@ -14,6 +14,11 @@ public:
 		Reset();
 	}
 
+	Cube(const Cube& other)
+	{
+		memcpy(faces.data(), other.faces.data(), sizeof(Color) * 6 * Order * Order);
+	}
+
 	void Reset()
 	{
 		for (int fi = 0; fi < 6; fi++)

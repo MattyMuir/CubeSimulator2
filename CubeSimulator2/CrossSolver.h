@@ -6,15 +6,7 @@
 #include <functional>
 
 #include "Cube.h"
-
-constexpr std::pair<int, int> otherTile[24] = { { 2, 7 }, { 5, 7 }, { 4, 7 }, { 3, 7 },
-															{ 3, 1 }, { 5, 1 }, { 4, 1 }, { 2, 1 },
-															{ 1, 8 }, { 5, 5 }, { 4, 3 }, { 0, 1 },
-															{ 1, 1 }, { 4, 5 }, { 5, 3 }, { 0, 8 },
-															{ 1, 5 }, { 2, 5 }, { 3, 3 }, { 0, 5 },
-															{ 1, 3 }, { 3, 5 }, { 2, 3 }, { 0, 3 } };
-
-constexpr int ringIndexLUT[6] = { -1, -1, 0, 2, 1, 3 };
+#include "MemoryPool.h"
 
 consteval std::array<int, 16> GenerateParityCases()
 {
@@ -39,8 +31,6 @@ consteval std::array<int, 16> GenerateParityCases()
 
 	return ret;
 }
-
-constexpr std::array<int, 16> parityCases = GenerateParityCases();
 
 class CrossSolver
 {
@@ -76,8 +66,6 @@ public:
 
 	Sequence operator()(const Cube<3>& start)
 	{
-		std::vector<char*> nodeBlocks;
-
 		// Initialize queue with custom predicate
 		auto pred = [](Node* n1, Node* n2) { return n1->FCost() > n2->FCost(); };
 		std::priority_queue<Node*, std::vector<Node*>, decltype(pred)> nodes(pred);
@@ -98,14 +86,13 @@ public:
 				break;
 			}
 
-			AppendAdjacentNodes(nodes, nodeBlocks, current);
+			AppendAdjacentNodes(nodes, current);
 		}
 
 		// Free memory
 		delete startNode;
 
-		for (char* block : nodeBlocks)
-			delete[] block;
+		pool.Clear();
 
 		return result;
 	}
@@ -123,10 +110,15 @@ public:
 			}
 		}
 
+		static constexpr std::array<int, 16> parityCases = GenerateParityCases();
+
 		return h + parityCases[parityByte];
 	}
 
 private:
+	// Attributes
+	MemoryPool<Node> pool = MemoryPool<Node>(576);
+
 	static void EdgeFound(int& h, uint8_t& parityByte, const Cube<3>& state, int fi, int pi)
 	{
 		// Check if piece has parity
@@ -145,6 +137,13 @@ private:
 		// Find piece parity
 		int edgeTileIndex = (pi - 1) / 2 + fi * 4;
 
+		static constexpr std::pair<int, int> otherTile[24] = { { 2, 7 }, { 5, 7 }, { 4, 7 }, { 3, 7 },
+															{ 3, 1 }, { 5, 1 }, { 4, 1 }, { 2, 1 },
+															{ 1, 8 }, { 5, 5 }, { 4, 3 }, { 0, 1 },
+															{ 1, 1 }, { 4, 5 }, { 5, 3 }, { 0, 8 },
+															{ 1, 5 }, { 2, 5 }, { 3, 3 }, { 0, 5 },
+															{ 1, 3 }, { 3, 5 }, { 2, 3 }, { 0, 3 } };
+
 		// Use LUT to determine the correspodning tile for current tile
 		auto [otherFI, otherPI] = otherTile[edgeTileIndex];
 
@@ -157,6 +156,8 @@ private:
 
 	static int ColorParity(ColorEnum c1, ColorEnum c2)
 	{
+		static constexpr int ringIndexLUT[6] = { -1, -1, 0, 2, 1, 3 };
+
 		int ringIndex1 = ringIndexLUT[(int)c1];
 		int ringIndex2 = ringIndexLUT[(int)c2];
 
@@ -165,10 +166,8 @@ private:
 	}
 
 	template<typename... T>
-	void AppendAdjacentNodes(std::priority_queue<Node*, T...>& nodes, std::vector<char*>& nodeBlocks, Node* node)
+	void AppendAdjacentNodes(std::priority_queue<Node*, T...>& nodes, Node* node)
 	{
-		char* nodeBlock = new char[sizeof(Node) * 18];
-		nodeBlocks.push_back(nodeBlock);
 		for (int fi = 0; fi < 6; fi++)
 		{
 			for (int num = 0; num < 3; num++)
@@ -176,7 +175,7 @@ private:
 				int numLUT[3] = { -1, 1, 2 };
 				Turn t((FaceEnum)fi, numLUT[num]);
 
-				Node* newNode = new(nodeBlock + sizeof(Node) * (num + fi * 3)) Node(node->state, node->g + 1, node, t);
+				Node* newNode = pool.Emplace(node->state, node->g + 1, node, t);
 				newNode->state.ApplyTurn(t);
 				nodes.push(newNode);
 			}
@@ -188,6 +187,7 @@ private:
 		Sequence s;
 
 		Node* current = end;
+		s.turns.reserve(current->g);
 		while (current->g != 0)
 		{
 			s.turns.push_back(current->move);

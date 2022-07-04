@@ -31,8 +31,6 @@ Canvas::Canvas(wxWindow* parent) : wxPanel(parent, wxID_ANY)
 	STOP_LOG(t);
 
 	std::cout << (float)lengthSum / iter << std::endl;
-
-	mainPtr->Destroy();
 }
 
 Canvas::~Canvas()
