@@ -14,7 +14,7 @@
 
 class Main;
 
-class Canvas : wxPanel
+class Canvas : public wxPanel
 {
 public:
 	Canvas(wxWindow* parent);
@@ -44,7 +44,7 @@ protected:
 		{
 			for (int x = 0; x < Order; x++)
 			{
-				brush.SetColour(cols[(int)cube.faces[faceIndex][y * Order + x].col]);
+				brush.SetColour(cols[cube.faces[faceIndex][y * Order + x]]);
 				dc.SetBrush(brush);
 
 				float screenX = cx + x * tileWidth;

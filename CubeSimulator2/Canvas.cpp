@@ -13,24 +13,11 @@ Canvas::Canvas(wxWindow* parent) : wxPanel(parent, wxID_ANY)
 	mainPtr = (Main*)parent;
 	srand(time(0));
 
-	TIMER(t);
+	cube.ApplySequence(Sequence::RandomSequence(25));
+
 	CrossSolver solver;
-	int lengthSum = 0;
-	int iter = 100000;
-	for (int i = 0; i < iter; i++)
-	{
-		cube.Reset();
-
-		Sequence scramble = Sequence::RandomSequence(20);
-		cube.ApplySequence(scramble);
-
-		Sequence solution = solver(cube);
-
-		lengthSum += solution.turns.size();
-	}
-	STOP_LOG(t);
-
-	std::cout << (float)lengthSum / iter << std::endl;
+	Sequence cross = solver(cube);
+	cube.ApplySequence(cross);
 }
 
 Canvas::~Canvas()

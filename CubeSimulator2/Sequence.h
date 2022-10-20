@@ -9,9 +9,10 @@ class Sequence
 {
 public:
 	Sequence() {}
-	Sequence(const std::string& notation)
+	Sequence(std::string_view notation)
 	{
-		std::stringstream ss(notation);
+		std::stringstream ss;
+		ss << notation;
 		std::string token;
 
 		while (std::getline(ss, token, ' '))
@@ -52,6 +53,11 @@ public:
 			res += turns[i].ToString();
 		}
 		return res;
+	}
+
+	operator std::string()
+	{
+		return ToString();
 	}
 
 	std::vector<Turn> turns;

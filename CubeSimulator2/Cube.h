@@ -3,7 +3,9 @@
 #include "Face.h"
 #include "Turn.h"
 #include "Sequence.h"
+
 #include <array>
+#include <ranges>
 
 template <size_t Order>
 class Cube
@@ -16,17 +18,13 @@ public:
 
 	Cube(const Cube& other)
 	{
-		memcpy(faces.data(), other.faces.data(), sizeof(Color) * 6 * Order * Order);
+		memcpy(faces.data(), other.faces.data(), 6 * Order * Order * sizeof(Color));
 	}
 
 	void Reset()
 	{
 		for (int fi = 0; fi < 6; fi++)
-		{
-			auto& face = faces[fi];
-			for (Color& tile : face)
-				tile = (ColorEnum)fi;
-		}
+			std::fill(faces[fi].begin(), faces[fi].end(), (ColorEnum)fi);
 	}
 
 	void ApplyTurn(Turn turn)
@@ -187,23 +185,23 @@ public:
 		bool col[6] = { false, false, false, false, false, false };
 		for (const auto& face : faces)
 		{
-			col[(int)face[0].col] = true;
+			col[(int)face[0]] = true;
 		}
 
 		if (!(col[0] && col[1] && col[2] && col[3] && col[4] && col[5])) return false;
 
 		for (const auto& face : faces)
 		{
-			ColorEnum faceCol = face[0].col;
+			ColorEnum faceCol = face[0];
 			for (int i = 1; i < Order * Order; i++)
 			{
-				if (face[i].col != faceCol) return false;
+				if (face[i] != faceCol) return false;
 			}
 		}
 
 		return true;
 	}
-public:
+
 	std::array<std::array<Color, Order * Order>, 6> faces;
 
 private:
